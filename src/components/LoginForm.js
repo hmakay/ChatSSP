@@ -14,7 +14,7 @@ export default class LoginForm extends Component {
 	setUser = ({user, isUser})=>{
 
 		if(isUser){
-			this.setError("User name taken")
+			this.setError("Usuário logado")
 		}else{
 			this.setError("")
 			this.props.setUser(user)
@@ -43,7 +43,7 @@ export default class LoginForm extends Component {
 				<form onSubmit={this.handleSubmit} className="login-form" >
 
 					<label htmlFor="nickname">
-						<h2>Got a nickname?</h2>
+						<h2>Digite seu Nome</h2>
 					</label>
 					<input
 						ref={(input)=>{ this.textInput = input }} 
@@ -51,7 +51,7 @@ export default class LoginForm extends Component {
 						id="nickname"
 						value={nickname}
 						onChange={this.handleChange}
-						placeholder={'MYCoolUSername'}
+						placeholder={'Nome Sobrenome Setor'}
 						/>
 						<div className="error">{error ? error:null}</div>
 

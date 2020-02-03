@@ -76,7 +76,7 @@ export default class MessageInput extends Component {
 						className = "form-control"
 						value = { message }
 						autoComplete = {'off'}
-						placeholder = "Type something interesting"
+						placeholder = "Digite AQUI"
 						onKeyUp = { e => { e.keyCode !== 13 && this.sendTyping() } }
 						onChange = {
 							({target})=>{
@@ -89,7 +89,7 @@ export default class MessageInput extends Component {
 						type = "submit"
 						className = "send"
 
-					> Send </button>
+					> ENVIAR </button>
 				</form>
 
 			</div>

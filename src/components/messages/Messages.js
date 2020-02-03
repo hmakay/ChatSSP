@@ -47,7 +47,7 @@ export default class Messages extends Component {
 						typingUsers.map((name)=>{
 							return (
 								<div key={name} className="typing-user">
-									{`${name} is typing . . .`}
+									{`${name} está digitando`}
 								</div>
 							)
 						})

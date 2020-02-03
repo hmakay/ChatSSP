@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import FAChevronDown from 'react-icons/lib/md/keyboard-arrow-down'
+import FaChevronRight  from 'react-icons/lib/md/keyboard-arrow-right'
+
 import FAMenu from 'react-icons/lib/fa/list-ul'
 import FASearch from 'react-icons/lib/fa/search'
 import MdEject from 'react-icons/lib/md/eject'
@@ -41,7 +42,7 @@ export default class SideBar extends Component{
 		return (
 			<div id="side-bar">
 					<div className="heading">
-						<div className="app-name">Our Cool Chat <FAChevronDown /></div>
+						<div className="app-name"><FaChevronRight />{user.name}</div>
 						<div className="menu">
 							<FAMenu />
 						</div>
@@ -49,7 +50,7 @@ export default class SideBar extends Component{
 					<form onSubmit={this.handleSubmit} className="search">
 						<i className="search-icon"><FASearch /></i>
 						<input 
-							placeholder="Search" 
+							placeholder="Buscar usuário" 
 							type="text"
 							value={reciever}
 							onChange={(e)=>{ this.setState({reciever:e.target.value}) }}/>
@@ -64,7 +65,7 @@ export default class SideBar extends Component{
 						<div 
 							onClick = { ()=>{ this.setActiveSideBar(SideBar.type.USERS) } }
 							className={`side-bar-select__option ${ activeSideBar === SideBar.type.USERS ? 'active':''}`}>
-							<span>Users</span>
+							<span>Usuários</span>
 						</div>
 					</div>
 					<div 
@@ -97,8 +98,9 @@ export default class SideBar extends Component{
 						}
 					</div>
 					<div className="current-user">
-						<span>{user.name}</span>
+					<span>Sair do chat</span>
 						<div onClick={()=>{logout()}} title="Logout" className="logout">
+						    
 							<MdEject/>	
 						</div>
 					</div>
