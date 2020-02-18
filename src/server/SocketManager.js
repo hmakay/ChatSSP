@@ -6,30 +6,35 @@ const { VERIFY_USER, USER_CONNECTED, USER_DISCONNECTED,
 
 const { createUser, createMessage, createChat } = require('../Factories')
 
-let connectedUsers = { }
+let connectedUsers = {}
+
 
 let communityChat = createChat({ isCommunity:true })
 
 module.exports = function(socket){
 					
-	// console.log('\x1bc'); //clears console
-	console.log("Socket Id:" + socket.id);
+
 
 	let sendMessageToChatFromUser;
 
 	let sendTypingFromUser;
 
 	//Verify Username
-	socket.on(VERIFY_USER, (nickname, callback)=>{
-		if(isUser(connectedUsers, nickname)){
-			callback({ isUser:true, user:null })
+	socket.on(VERIFY_USER, ({nickname,cpf}, callback)=>{
+		
+	 if(isUser(connectedUsers, nickname)){
+					 
+			callback({ isUser:true, user:connectedUsers[nickname] })
 		}else{
-			callback({ isUser:false, user:createUser({name:nickname, socketId:socket.id})})
+			callback({ isUser:false, user:createUser({name:nickname, socketId:socket.id, cpf:cpf})})
 		}
+	
 	})
 
 	//User Connects with username
 	socket.on(USER_CONNECTED, (user)=>{
+
+	
 		user.socketId = socket.id
 		connectedUsers = addUser(connectedUsers, user)
 		socket.user = user
@@ -38,7 +43,9 @@ module.exports = function(socket){
 		sendTypingFromUser = sendTypingToChat(user.name)
 
 		io.emit(USER_CONNECTED, connectedUsers)
-		console.log(connectedUsers);
+	//	console.log("---------CONECTADOS----------");
+		//console.log(connectedUsers);
+		
 
 	})
 	
@@ -63,11 +70,16 @@ module.exports = function(socket){
 
 	//Get Community Chat
 	socket.on(COMMUNITY_CHAT, (callback)=>{
+		
 		callback(communityChat)
 	})
 
 	socket.on(MESSAGE_SENT, ({chatId, message})=>{
+
 		sendMessageToChatFromUser(chatId, message)
+
+	
+		
 	})
 
 	socket.on(TYPING, ({chatId, isTyping})=>{
@@ -75,25 +87,29 @@ module.exports = function(socket){
 	})
 
 	socket.on(PRIVATE_MESSAGE, ({reciever, sender, activeChat})=>{
-		if(reciever in connectedUsers){
-			const recieverSocket = connectedUsers[reciever].socketId
+		
+	
+		if(reciever.name in connectedUsers){
+			const recieverSocket = connectedUsers[reciever.name].socketId
 			if(activeChat === null || activeChat.id === communityChat.id){
-				const newChat = createChat({ name:`${reciever}&${sender}`, users:[reciever, sender] })
+				const newChat = createChat({ name:`${reciever.name}&${sender.name}`, users:[reciever, sender] })
 				socket.to(recieverSocket).emit(PRIVATE_MESSAGE, newChat)
 				socket.emit(PRIVATE_MESSAGE, newChat)
 			}else{
-				if(!(reciever in activeChat.users)){
+				if(!(reciever.name in activeChat.users)){
 
 					activeChat.users
 					.filter(user =>  user in connectedUsers)
 					.map(user => connectedUsers[user])
 					.map( user => {
-						socket.to(user.socketId).emit(NEW_CHAT_USER, {chatId:activeChat.id, newUser: reciever})
+						socket.to(user.socketId).emit(NEW_CHAT_USER, {chatId:activeChat.id, newUser: reciever.name})
 					})
-					socket.emit(NEW_CHAT_USER, {chatId:activeChat, newUser:reciever})
+					socket.emit(NEW_CHAT_USER, {chatId:activeChat, newUser:reciever.name})
 				}
 				socket.to(recieverSocket).emit(PRIVATE_MESSAGE, activeChat)
 			}
+
+			
 		}
 	})
 
@@ -117,6 +133,7 @@ function sendTypingToChat(user){
 * @return function(chatId, message)
 */
 function sendMessageToChat(sender){
+	
 	return (chatId, message)=>{
 		io.emit(`${MESSAGE_RECIEVED}-${chatId}`, createMessage({message, sender}))
 	}

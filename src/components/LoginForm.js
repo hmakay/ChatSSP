@@ -7,25 +7,50 @@ export default class LoginForm extends Component {
 	
 	  this.state = {
 	  	nickname:"",
-	  	error:""
+			error:"",
+			cpf:"",
 	  };
 	}
 
-	setUser = ({user, isUser})=>{
+	componentDidMount(){
+		let namesObj = {
+			1:"Bonates",
+			2:"Gama",
+			3:"jonilson",
+			4:"Carol",
+			5:"Luiz",
+			6:"Ronaldo",
+			7:"Monica",
+			8:"Leone",
+			9:"Rafael",
+			10:"Maria"
+		}
+		
+		let index  = Math.floor(Math.random() * 10 + 1) 
 
-		if(isUser){
-			this.setError("Usuário logado")
+		this.setState({nickname:	namesObj[index] , cpf:index})
+	}
+  
+
+	setUser = ({user, isUser})=>{
+		
+		if(isUser){ 
+			//console.log(user)
+			this.setError("Usuário logado em outra sessão")
 		}else{
 			this.setError("")
 			this.props.setUser(user)
 		}
 	}
 
+	
+
 	handleSubmit = (e)=>{
 		e.preventDefault()
 		const { socket } = this.props
-		const { nickname } = this.state
-		socket.emit(VERIFY_USER, nickname, this.setUser)
+		const { nickname,cpf } = this.state
+		
+		socket.emit(VERIFY_USER, {nickname,cpf},this.setUser)
 	}
 
 	handleChange = (e)=>{	
@@ -36,8 +61,12 @@ export default class LoginForm extends Component {
 		this.setState({error})
 	}
 
-	render() {	
-		const { nickname, error } = this.state
+	render() {
+	
+		const { nickname,cpf, error } = this.state
+
+		//console.log(this.state)
+			
 		return (
 			<div className="login">
 				<form onSubmit={this.handleSubmit} className="login-form" >
@@ -50,6 +79,7 @@ export default class LoginForm extends Component {
 						type="text"
 						id="nickname"
 						value={nickname}
+						cpf={cpf}
 						onChange={this.handleChange}
 						placeholder={'Nome Sobrenome Setor'}
 						/>

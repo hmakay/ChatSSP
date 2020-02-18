@@ -1,11 +1,12 @@
 const uuidv4 = require('uuid/v4')
 
 
-const createUser = ({name = "", socketId = null } = {})=>(
+const createUser = ({id,name = "", socketId = null, cpf="" } = {})=>(
 	{
 		id:uuidv4(),
 		name,
-		socketId
+		socketId,
+		cpf
 		
 	}
 )
@@ -16,14 +17,17 @@ const createMessage = ({message = "", sender = ""} = { })=>(
 			id:uuidv4(),
 			time:getTime(new Date(Date.now())),
 			message,
-			sender	
+			sender
+		
+			
 		}
 
 	)
 
 
-const createChat = ({messages = [], name = "Geral", users = [], isCommunity = false} = {})=>(
+const createChat = ({messages = [], name = "Geral", users = {}, isCommunity = false} = {})=>(
 	{
+		
 		id:uuidv4(),
 		name: isCommunity ? name : createChatNameFromUsers(users),
 		messages,
@@ -34,7 +38,12 @@ const createChat = ({messages = [], name = "Geral", users = [], isCommunity = fa
 )
 
 const createChatNameFromUsers = (users, excludedUser = "") => {
-	return users.filter(u => u !== excludedUser).join(' & ') || "Chat Vazio"
+	
+	const us = users.map(function(use) {
+		return use.name;
+	});
+				
+	return us.filter(u => u !== excludedUser).join(' & ') || "Chat Vazio"
 }
 
 

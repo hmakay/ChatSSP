@@ -38,9 +38,17 @@ export default class ChatContainer extends Component {
 			socket.emit(COMMUNITY_CHAT, this.resetChat)
 		})
 		socket.on(USER_CONNECTED, (users)=>{
+			
 			const removedUsers =  differenceBy(this.state.users, values(users), 'id')
 			this.removeUsersFromChat(removedUsers)
 			this.setState({ users: values(users) })
+			
+			
+			
+			//***************** */
+			//console.log(values(users))
+
+			
 		})
 		socket.on(USER_DISCONNECTED, (users)=>{
 			this.setState({ users: values(users) })			
@@ -48,10 +56,11 @@ export default class ChatContainer extends Component {
 		socket.on(NEW_CHAT_USER, this.adduserToChat)
 	}
 
-	sendOpenPrivateMessage = (reciever) => {
+	sendOpenPrivateMessage = (recieverObj) => {
 		const { socket, user } = this.props
 		const { activeChat } = this.state
-		socket.emit(PRIVATE_MESSAGE, {reciever, sender:user.name, activeChat})
+
+		socket.emit(PRIVATE_MESSAGE, {reciever:{name:recieverObj.name, cpf:recieverObj.cpf}, sender:{name:user.name, cpf:user.cpf},activeChat})
 
 	}
 
@@ -111,8 +120,12 @@ export default class ChatContainer extends Component {
 				return chat
 			})
 
+		//console.log(chats)
+
 			this.setState({chats:newChats})
 		}
+
+		
 	}
 
 	/*
@@ -164,14 +177,16 @@ export default class ChatContainer extends Component {
 		this.setState({activeChat})
 	}
 	render() {
-		const { user, logout } = this.props
+		const { user, logout} = this.props
 		const { chats, activeChat, users } = this.state
+			
 		return (
 			<div className="container">
 				<SideBar
 					logout={logout}
 					chats={chats}
 					user={user}
+					
 					users={users}
 					activeChat={activeChat}
 					setActiveChat={this.setActiveChat}
@@ -179,7 +194,7 @@ export default class ChatContainer extends Component {
 					/>
 				<div className="chat-room-container">
 					{
-						activeChat !== null ? (
+						activeChat !== null ? (							
 
 							<div className="chat-room">
 								<ChatHeading name={activeChat.name} />
@@ -211,5 +226,7 @@ export default class ChatContainer extends Component {
 
 			</div>
 		);
+
+		
 	}
 }

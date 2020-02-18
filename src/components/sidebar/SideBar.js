@@ -29,6 +29,7 @@ export default class SideBar extends Component{
 	}
 
 	addChatForUser = (reciever) => {
+	
 		this.props.onSendPrivateMessage(reciever)
 		this.setActiveSideBar(SideBar.type.CHATS)
 	}
@@ -39,6 +40,7 @@ export default class SideBar extends Component{
 	render(){
 		const { chats, activeChat, user, setActiveChat, logout, users } = this.props
 		const { reciever, activeSideBar } = this.state
+			
 		return (
 			<div id="side-bar">
 					<div className="heading">
@@ -76,7 +78,8 @@ export default class SideBar extends Component{
 						{
 						activeSideBar === SideBar.type.CHATS ?
 						chats.map((chat)=>{
-								return(
+							console.log(chat)
+								return(// AQUI ESTÁ O ERRO QUE TEM QUE CORRIGIR QUE ESTÁ DUBPLICANDO E DEIXANDO DOIDO
 								<SideBarOption 
 									key = {chat.id}
 									lastMessage = { get(last(chat.messages), 'message', '') }
@@ -88,11 +91,13 @@ export default class SideBar extends Component{
 						})	
 						
 						:
+							
 							differenceBy(users, [user], 'name').map((user)=>{
+							
 								return <SideBarOption 
 									key = { user.id }
 									name = { user.name }
-									onClick = { ()=>{ this.addChatForUser(user.name) }  }
+									onClick = { ()=>{ this.addChatForUser({name:user.name,cpf:user.cpf}) }  }
 								/>
 							})
 						}

@@ -1,2 +1,2 @@
-##Chat Criado utilizando Socket.io e React
+## :ledger: Chat Criado utilizando Socket.io e React
 
